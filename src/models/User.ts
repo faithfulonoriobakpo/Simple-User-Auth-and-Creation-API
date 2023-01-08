@@ -65,7 +65,7 @@ export class UserClass {
         
     }
 
-    public async authenticate_user(username:string, password:string): Promise<User | string> {
+    public async authenticate_user(username:string, password:string): Promise<Response | string> {
         try {
             const conn = await Client.connect();
             const query = 'SELECT * FROM users WHERE LOWER(username) = $1';
@@ -73,7 +73,9 @@ export class UserClass {
             conn.release();
             if(result.rows.length){
                 const user = result.rows[0];
-                return bcrypt.compareSync(password, user.password)? user : "Password is incorrect";
+                return bcrypt.compareSync(password + process.env.pepper, user.password)? 
+                        {status: 200, message: "User logged in successfully"} : 
+                        {status: 400, message: "Password is incorrect"};
             }
             return "User does not exist";
 
