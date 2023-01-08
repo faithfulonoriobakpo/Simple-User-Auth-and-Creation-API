@@ -19,9 +19,20 @@ A simple api for creating and authenticating a user for an express application w
 
 ### url
 Available endpoints are
-- ``` 
-    http://127.0.0.1:3000/api/login 
-```
-- ``` 
-    http://127.0.0.1:3000/api/signup
+ ``` 
+   Endpoint http://127.0.0.1:3000/api/login
+   
+   Payload {
+        username: "username",
+        password: "password"
+   }
+
+   Endpoint http://127.0.0.1:3000/api/signup
+   
+   Payload {
+        username: "username",
+        password: "password",
+        email: "email",
+        sex: "sex"
+   }
   ```
