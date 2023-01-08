@@ -10,7 +10,7 @@ A simple api for creating and authenticating a user for an express application w
 
 ### Run on Local
 - Clone or download repo
-- Run npm install from root of project
+- Run npm install from root of project to install dependencies
 - Ensure you have postgres and psql installed on your machine
 - Create a database called admin locally
 - Set up environment variables accordingly
