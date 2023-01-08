@@ -70,9 +70,11 @@ class UserClass {
                 conn.release();
                 if (result.rows.length) {
                     const user = result.rows[0];
-                    return bcrypt_1.default.compareSync(password, user.password) ? user : "Password is incorrect";
+                    return bcrypt_1.default.compareSync(password + process.env.pepper, user.password) ?
+                        { status: 200, message: "User logged in successfully" } :
+                        { status: 400, message: "Password is incorrect" };
                 }
-                return "User does not exist";
+                return { status: 400, message: "User does not exist" };
             }
             catch (err) {
                 throw new Error(`Could not fetch user: ${err}`);

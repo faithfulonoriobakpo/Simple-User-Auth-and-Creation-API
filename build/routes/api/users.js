@@ -15,28 +15,54 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../../models/User");
 const users = express_1.default.Router();
-// users.post('/login', async (req:Request, res:Response) => {
-//     const data = req.body;
-//     const username:string = data.username as string;
-//     const password:string = data.password as string;
-//     try {
-//         let user = new UserClass();
-//         const response = await new_user.authenticate_user(username, password);
-//         if(){
-//         }
-//     } catch(err) {
-//         res.json({message:err});
-//     }
-// });
-users.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+users.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = req.body;
+    const username = data.username;
+    const password = data.password;
     try {
-        const new_user = new User_1.UserClass();
-        const response = yield new_user.create_user(data);
-        res.json(response);
+        if (username && password) {
+            const user = new User_1.UserClass();
+            const response = yield user.authenticate_user(username, password);
+            res.json(response);
+        }
+        else {
+            throw new TypeError('Payload must contain username and password');
+        }
     }
     catch (err) {
-        res.send(err);
+        if (err instanceof TypeError) {
+            res.status(400).json({ status: 400, message: err.message });
+        }
+        else {
+            res.json({ err });
+        }
+    }
+}));
+users.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const requiredkeys = ['username', 'password', 'email', 'sex'];
+    try {
+        const data = req.body;
+        console.log(data);
+        const allKeysExists = requiredkeys.every((key) => {
+            data.hasOwnProperty(key);
+        });
+        console.log(allKeysExists);
+        if (allKeysExists) {
+            const new_user = new User_1.UserClass();
+            const response = yield new_user.create_user(data);
+            res.json(response);
+        }
+        else {
+            throw new TypeError('all required keys must exist in payload');
+        }
+    }
+    catch (err) {
+        if (err instanceof TypeError) {
+            res.status(400).send({ message: err.message });
+        }
+        else {
+            res.send(err);
+        }
     }
 }));
 exports.default = users;
