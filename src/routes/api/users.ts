@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import { User, UserClass } from "../../models/User";
+import {UserClass} from "../../models/User";
 const users = express.Router();
 
 users.post('/login', async (req:Request, res:Response) => {
@@ -26,18 +26,15 @@ users.post('/login', async (req:Request, res:Response) => {
 users.post('/signup', async (req:Request, res:Response) => {
     const requiredkeys = ['username', 'password', 'email', 'sex'];
     try {
-        const data: User = req.body;
-        console.log(data);
-        const allKeysExists = requiredkeys.every((key) => {
-            data.hasOwnProperty(key);
-        });
-        console.log(allKeysExists);
-        if(allKeysExists){
+        const data = req.body;
+        const requestBodykeys = Object.keys(data);
+        const validPayload = requiredkeys.every((key) => requestBodykeys.includes(key) && data[key]);
+        if(validPayload){
             const new_user = new UserClass();
             const response = await new_user.create_user(data);
             res.json(response);
         }else {
-            throw new TypeError('all required keys must exist in payload');
+            throw new TypeError('all required keys and values must exist in payload');
         }
 
     } catch (err){

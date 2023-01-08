@@ -42,12 +42,10 @@ users.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const requiredkeys = ['username', 'password', 'email', 'sex'];
     try {
         const data = req.body;
-        console.log(data);
-        const allKeysExists = requiredkeys.every((key) => {
-            data.hasOwnProperty(key);
-        });
-        console.log(allKeysExists);
-        if (allKeysExists) {
+        const requestBodykeys = Object.keys(data);
+        const validPayload = requiredkeys.every((key) => { console.log(data[key]); return requestBodykeys.includes(key) && data[key]; });
+        console.log(validPayload);
+        if (validPayload) {
             const new_user = new User_1.UserClass();
             const response = yield new_user.create_user(data);
             res.json(response);
