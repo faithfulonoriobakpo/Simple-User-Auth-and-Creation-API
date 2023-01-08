@@ -77,7 +77,7 @@ export class UserClass {
                         {status: 200, message: "User logged in successfully"} : 
                         {status: 400, message: "Password is incorrect"};
             }
-            return "User does not exist";
+            return {status: 400, message: "User does not exist"};
 
         } catch(err){
             throw new Error(`Could not fetch user: ${err}`);
