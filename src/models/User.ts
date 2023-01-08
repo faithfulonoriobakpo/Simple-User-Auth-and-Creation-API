@@ -1,7 +1,7 @@
 import Client from "../database";
 import bcrypt from "bcrypt";
 
-type User = {
+export type User = {
     id?: number,
     username: string,
     password: string,
@@ -62,7 +62,7 @@ export class Users {
             conn.release();
             if(result.rows.length){
                 const user = result.rows[0];
-                return bcrypt.compareSync(password, user.password)? user: "Password is incorrect";
+                return bcrypt.compareSync(password, user.password)? user : "Password is incorrect";
             }
             return "User does not exist";
 
