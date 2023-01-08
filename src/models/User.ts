@@ -9,7 +9,7 @@ export type User = {
     sex: string
 }
 
-export class Users {
+export class UserClass {
 
     public async list_users(): Promise<User[]> {
         try {
