@@ -9,6 +9,11 @@ export type User = {
     sex: string
 }
 
+type Response = {
+    status: number,
+    message: string
+}
+
 export class UserClass {
 
     public async list_users(): Promise<User[]> {
@@ -24,7 +29,7 @@ export class UserClass {
         }
     }
 
-    public async create_user(user: User): Promise<User | string> {
+    public async create_user(user: User): Promise<Response | string> {
         try {
 
             const conn = await Client.connect();
@@ -41,11 +46,17 @@ export class UserClass {
 
                 const result = await conn.query(query, [user.username, hashed_password, user.email, user.sex]);
                 conn.release();
-                return result.rows[0];
+                return {
+                    status: 200,
+                    message: "Profile created successfully"
+                };
 
             }else{
                 conn.release();
-                return "Username already exists";
+                return {
+                    status: 400,
+                    message: "Username exists already"
+                };
             }
 
         } catch(err) {
