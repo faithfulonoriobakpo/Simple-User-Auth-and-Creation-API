@@ -18,7 +18,7 @@ users.post('/login', async (req:Request, res:Response) => {
         if (err instanceof TypeError){
             res.status(400).json({status: 400, message:err.message});
         }else{
-            res.json({err});
+            res.status(500).json({status:500, message:"Server Error"});
         }
     }
 });

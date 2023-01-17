@@ -34,7 +34,7 @@ users.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* (
             res.status(400).json({ status: 400, message: err.message });
         }
         else {
-            res.json({ err });
+            res.status(500).json({ status: 500, message: "Server Error" });
         }
     }
 }));
@@ -43,15 +43,14 @@ users.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const data = req.body;
         const requestBodykeys = Object.keys(data);
-        const validPayload = requiredkeys.every((key) => { console.log(data[key]); return requestBodykeys.includes(key) && data[key]; });
-        console.log(validPayload);
+        const validPayload = requiredkeys.every((key) => requestBodykeys.includes(key) && data[key]);
         if (validPayload) {
             const new_user = new User_1.UserClass();
             const response = yield new_user.create_user(data);
             res.json(response);
         }
         else {
-            throw new TypeError('all required keys must exist in payload');
+            throw new TypeError('all required keys and values must exist in payload');
         }
     }
     catch (err) {
