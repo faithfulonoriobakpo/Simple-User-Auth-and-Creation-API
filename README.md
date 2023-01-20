@@ -22,6 +22,8 @@ Available endpoints are
  ``` 
    Endpoint http://127.0.0.1:3000/api/login
    
+   Method: Post
+   
    Payload {
         username: "username",
         password: "password"
