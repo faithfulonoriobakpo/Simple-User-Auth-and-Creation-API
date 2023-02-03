@@ -24,7 +24,9 @@ users.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* (
         if (username && password) {
             const user = new User_1.UserClass();
             const response = yield user.authenticate_user(username, password);
-            const token = jsonwebtoken_1.default.sign({ "username": username }, process.env.JWT_SECRET);
+            const token = jsonwebtoken_1.default.sign({ "username": username }, process.env.JWT_SECRET, {
+                expiresIn: "2h",
+            });
             res.json({ response, token });
         }
         else {
@@ -49,7 +51,10 @@ users.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (validPayload) {
             const new_user = new User_1.UserClass();
             const response = yield new_user.create_user(data);
-            res.json(response);
+            const token = jsonwebtoken_1.default.sign({ "username": data.username }, process.env.JWT_SECRET, {
+                expiresIn: "2h",
+            });
+            res.json({ response, token });
         }
         else {
             throw new TypeError('all required keys and values must exist in payload');
@@ -57,7 +62,7 @@ users.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     catch (err) {
         if (err instanceof TypeError) {
-            res.status(400).send({ message: err.message });
+            res.status(400).json({ status: 400, message: err.message });
         }
         else {
             res.send(err);

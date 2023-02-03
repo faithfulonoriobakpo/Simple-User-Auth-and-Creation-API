@@ -1,5 +1,6 @@
 import Client from "../database";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export type User = {
     id?: number,
@@ -11,7 +12,8 @@ export type User = {
 
 type Response = {
     status: number,
-    message: string
+    message: string,
+    token?: string
 }
 
 export class UserClass {
@@ -45,10 +47,12 @@ export class UserClass {
                 const hashed_password = bcrypt.hashSync(user.password + pepper, salt);
 
                 const result = await conn.query(query, [user.username, hashed_password, user.email, user.sex]);
+                const token = jwt.sign({username:user.username}, process.env.JWT_SECRET as string);
                 conn.release();
                 return {
                     status: 200,
-                    message: "Profile created successfully"
+                    message: "Profile created successfully",
+                    token: token
                 };
 
             }else{
@@ -73,8 +77,10 @@ export class UserClass {
             conn.release();
             if(result.rows.length){
                 const user = result.rows[0];
+                const token = jwt.sign({username:username}, process.env.JWT_SECRET as string);
+
                 return bcrypt.compareSync(password + process.env.pepper, user.password)? 
-                        {status: 200, message: "User logged in successfully"} : 
+                        {status: 200, message: "User logged in successfully", token:token} : 
                         {status: 400, message: "Password is incorrect"};
             }
             return {status: 400, message: "User does not exist"};

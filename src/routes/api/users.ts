@@ -13,11 +13,7 @@ users.post('/login', async (req:Request, res:Response) => {
             const user = new UserClass();
             const response = await user.authenticate_user(username, password);
 
-            const token = jwt.sign({"username": username}, process.env.JWT_SECRET as string, {
-                expiresIn: "2h",
-            });
-
-            res.json({response,token});
+            res.json(response);
         }else {
             throw new TypeError('Payload must contain username and password');
         }
@@ -43,14 +39,14 @@ users.post('/signup', async (req:Request, res:Response) => {
                 expiresIn: "2h",
             });
 
-            res.json({response,token});
+            res.json(response);
         }else {
             throw new TypeError('all required keys and values must exist in payload');
         }
 
     } catch (err){
         if(err instanceof TypeError) {
-            res.status(400).send({message:err.message});
+            res.status(400).json({status:400,message:err.message});
         } else {
             res.send(err);
         }
