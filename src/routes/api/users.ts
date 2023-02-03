@@ -1,5 +1,7 @@
 import express, {Request, Response} from "express";
 import {UserClass} from "../../models/User";
+import jwt, { JsonWebTokenError } from "jsonwebtoken";
+
 const users = express.Router();
 
 users.post('/login', async (req:Request, res:Response) => {
@@ -10,7 +12,12 @@ users.post('/login', async (req:Request, res:Response) => {
         if(username && password){
             const user = new UserClass();
             const response = await user.authenticate_user(username, password);
-            res.json(response);
+
+            const token = jwt.sign({"username": username}, process.env.JWT_SECRET as string, {
+                expiresIn: "2h",
+            });
+
+            res.json({response,token});
         }else {
             throw new TypeError('Payload must contain username and password');
         }
@@ -32,7 +39,11 @@ users.post('/signup', async (req:Request, res:Response) => {
         if(validPayload){
             const new_user = new UserClass();
             const response = await new_user.create_user(data);
-            res.json(response);
+            const token = jwt.sign({"username": data.username}, process.env.JWT_SECRET as string, {
+                expiresIn: "2h",
+            });
+
+            res.json({response,token});
         }else {
             throw new TypeError('all required keys and values must exist in payload');
         }

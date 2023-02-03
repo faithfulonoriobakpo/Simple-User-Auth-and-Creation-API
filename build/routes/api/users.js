@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../../models/User");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const users = express_1.default.Router();
 users.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = req.body;
@@ -23,7 +24,8 @@ users.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* (
         if (username && password) {
             const user = new User_1.UserClass();
             const response = yield user.authenticate_user(username, password);
-            res.json(response);
+            const token = jsonwebtoken_1.default.sign({ "username": username }, process.env.JWT_SECRET);
+            res.json({ response, token });
         }
         else {
             throw new TypeError('Payload must contain username and password');
