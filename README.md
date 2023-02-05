@@ -20,6 +20,15 @@ A simple api for creating and authenticating a user for an express application w
 ### url
 Available endpoints are
  ``` 
+   ##### Fetch all users
+   
+   Endpoint: http://127.0.0.1:3000/api/getallusers
+   
+   Method: Post
+   
+   
+   ##### Login
+   
    Endpoint http://127.0.0.1:3000/api/login
    
    Method: Post
@@ -29,7 +38,11 @@ Available endpoints are
         password: "password"
    }
 
+   ##### Sign Up
+   
    Endpoint http://127.0.0.1:3000/api/signup
+   
+   Method: Post
    
    Payload {
         username: "username",
