@@ -15,7 +15,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../../models/User");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+;
 const users = express_1.default.Router();
+// Middleware function to authenticate requests
+const authenticate = (req, res, next) => {
+    // get token from the headers
+    const authorization = req.headers.authorization;
+    const token = req.body.token || req.query.token || req.params.token || (authorization === null || authorization === void 0 ? void 0 : authorization.split(' ')[1]);
+    console.log(token);
+    if (!token) {
+        return res.status(401).json({ status: 401, message: "Access Denied. No Token Provided." });
+    }
+    try {
+        const verifiedJWT = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        req.user = verifiedJWT;
+        next();
+    }
+    catch (ex) {
+        return res.status(400).json({ status: 400, message: "Invalid Token" });
+    }
+};
 users.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = req.body;
     const username = data.username;
@@ -24,10 +43,7 @@ users.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* (
         if (username && password) {
             const user = new User_1.UserClass();
             const response = yield user.authenticate_user(username, password);
-            const token = jsonwebtoken_1.default.sign({ "username": username }, process.env.JWT_SECRET, {
-                expiresIn: "2h",
-            });
-            res.json({ response, token });
+            res.json(response);
         }
         else {
             throw new TypeError('Payload must contain username and password');
@@ -51,14 +67,26 @@ users.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (validPayload) {
             const new_user = new User_1.UserClass();
             const response = yield new_user.create_user(data);
-            const token = jsonwebtoken_1.default.sign({ "username": data.username }, process.env.JWT_SECRET, {
-                expiresIn: "2h",
-            });
-            res.json({ response, token });
+            res.json(response);
         }
         else {
             throw new TypeError('all required keys and values must exist in payload');
         }
+    }
+    catch (err) {
+        if (err instanceof TypeError) {
+            res.status(400).json({ status: 400, message: err.message });
+        }
+        else {
+            res.send(err);
+        }
+    }
+}));
+users.get('/getallusers', authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const users = new User_1.UserClass();
+        const result = yield users.list_users();
+        res.send(result);
     }
     catch (err) {
         if (err instanceof TypeError) {

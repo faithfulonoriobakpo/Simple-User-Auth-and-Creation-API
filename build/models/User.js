@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserClass = void 0;
 const database_1 = __importDefault(require("../database"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 class UserClass {
     list_users() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -42,10 +43,12 @@ class UserClass {
                     const salt = bcrypt_1.default.genSaltSync(Number(saltRounds));
                     const hashed_password = bcrypt_1.default.hashSync(user.password + pepper, salt);
                     const result = yield conn.query(query, [user.username, hashed_password, user.email, user.sex]);
+                    const token = jsonwebtoken_1.default.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
                     conn.release();
                     return {
                         status: 200,
-                        message: "Profile created successfully"
+                        message: "Profile created successfully",
+                        token: token
                     };
                 }
                 else {
@@ -70,8 +73,9 @@ class UserClass {
                 conn.release();
                 if (result.rows.length) {
                     const user = result.rows[0];
+                    const token = jsonwebtoken_1.default.sign({ username: username }, process.env.JWT_SECRET, { expiresIn: '1h' });
                     return bcrypt_1.default.compareSync(password + process.env.pepper, user.password) ?
-                        { status: 200, message: "User logged in successfully" } :
+                        { status: 200, message: "User logged in successfully", token: token } :
                         { status: 400, message: "Password is incorrect" };
                 }
                 return { status: 400, message: "User does not exist" };

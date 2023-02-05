@@ -1,8 +1,27 @@
-import express, {Request, Response} from "express";
+import express, {NextFunction, Request, Response} from "express";
 import {UserClass} from "../../models/User";
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
 
+
 const users = express.Router();
+
+// Middleware function to authenticate requests
+const authenticate = (req:Request, res:Response, next:NextFunction) => {
+    // get token from the headers
+    const authorization = req.headers.authorization;
+    const token = req.body.token || req.query.token || req.params.token || authorization?.split(' ')[1];
+  
+    if (!token) {
+      return res.status(401).json({status:401, message:"Access Denied. No Token Provided."});
+    }
+  
+    try {
+      jwt.verify(token, process.env.JWT_SECRET as string);
+      next();
+    } catch (ex) {
+      return res.status(400).json({status:400, message:"Invalid Token"});
+    }
+  };
 
 users.post('/login', async (req:Request, res:Response) => {
     const data = req.body;
@@ -12,7 +31,6 @@ users.post('/login', async (req:Request, res:Response) => {
         if(username && password){
             const user = new UserClass();
             const response = await user.authenticate_user(username, password);
-
             res.json(response);
         }else {
             throw new TypeError('Payload must contain username and password');
@@ -35,10 +53,6 @@ users.post('/signup', async (req:Request, res:Response) => {
         if(validPayload){
             const new_user = new UserClass();
             const response = await new_user.create_user(data);
-            const token = jwt.sign({"username": data.username}, process.env.JWT_SECRET as string, {
-                expiresIn: "2h",
-            });
-
             res.json(response);
         }else {
             throw new TypeError('all required keys and values must exist in payload');
@@ -48,6 +62,20 @@ users.post('/signup', async (req:Request, res:Response) => {
         if(err instanceof TypeError) {
             res.status(400).json({status:400,message:err.message});
         } else {
+            res.send(err);
+        }
+    }
+});
+
+users.get('/getallusers', authenticate, async (req:Request, res:Response) => {
+    try{
+        const users = new UserClass();
+        const result = await users.list_users();
+        res.send(result);
+    }catch(err){
+        if(err instanceof TypeError){
+            res.status(400).json({status:400,message:err.message});
+        }else{
             res.send(err);
         }
     }
