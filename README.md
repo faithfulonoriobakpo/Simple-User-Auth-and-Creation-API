@@ -8,6 +8,11 @@ A simple api for creating and authenticating a user for an express application w
 - NodeJs
 - Express
 
+### Dependencies
+- bcrypt for password hashing
+- jsonwebtokens for jwt authentication
+- dotenv for environment variables
+
 ### Run on Local
 - Clone or download repo
 - Run npm install from root of project to install dependencies
@@ -26,6 +31,8 @@ Available endpoints are
        Endpoint: http://127.0.0.1:3000/api/getallusers
    
        Method: Post
+       
+       Requires authorisation token as part of the header with bearer as auth type. Token is provided on login.
    ```
    
    ##### Login
