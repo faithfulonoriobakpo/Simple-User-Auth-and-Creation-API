@@ -14,27 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const User_1 = require("../../models/User");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-;
+const auth_1 = require("../../middleware/auth");
 const users = express_1.default.Router();
-// Middleware function to authenticate requests
-const authenticate = (req, res, next) => {
-    // get token from the headers
-    const authorization = req.headers.authorization;
-    const token = req.body.token || req.query.token || req.params.token || (authorization === null || authorization === void 0 ? void 0 : authorization.split(' ')[1]);
-    console.log(token);
-    if (!token) {
-        return res.status(401).json({ status: 401, message: "Access Denied. No Token Provided." });
-    }
-    try {
-        const verifiedJWT = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        req.user = verifiedJWT;
-        next();
-    }
-    catch (ex) {
-        return res.status(400).json({ status: 400, message: "Invalid Token" });
-    }
-};
 users.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = req.body;
     const username = data.username;
@@ -82,7 +63,7 @@ users.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         }
     }
 }));
-users.get('/getallusers', authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+users.get('/getallusers', auth_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = new User_1.UserClass();
         const result = yield users.list_users();
