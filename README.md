@@ -22,14 +22,16 @@ Available endpoints are
   
    ##### Fetch all users
    
-   ``` Endpoint: http://127.0.0.1:3000/api/getallusers
+   ``` 
+       Endpoint: http://127.0.0.1:3000/api/getallusers
    
        Method: Post
    ```
    
    ##### Login
    
-   ``` Endpoint http://127.0.0.1:3000/api/login
+   ``` 
+       Endpoint http://127.0.0.1:3000/api/login
    
        Method: Post
    
@@ -41,7 +43,8 @@ Available endpoints are
 
    ##### Sign Up
    
-   ``` Endpoint http://127.0.0.1:3000/api/signup
+   ``` 
+       Endpoint http://127.0.0.1:3000/api/signup
    
        Method: Post
 
