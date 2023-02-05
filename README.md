@@ -19,7 +19,7 @@ A simple api for creating and authenticating a user for an express application w
 
 ### url
 Available endpoints are
- ``` 
+  
    ##### Fetch all users
    
    Endpoint: http://127.0.0.1:3000/api/getallusers
@@ -50,4 +50,4 @@ Available endpoints are
         email: "email",
         sex: "sex"
    }
-  ```
+  
