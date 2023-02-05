@@ -21,7 +21,7 @@ class UserClass {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.connect();
-                const query = 'SELECT * FROM users';
+                const query = 'SELECT username, email, sex FROM users';
                 const result = yield conn.query(query);
                 conn.release();
                 return result.rows;

@@ -21,7 +21,7 @@ export class UserClass {
     public async list_users(): Promise<User[] | Response> {
         try {
             const conn = await Client.connect();
-            const query = 'SELECT * FROM users'
+            const query = 'SELECT username, email, sex FROM users'
             const result = await conn.query(query);
             conn.release();
             return result.rows;
